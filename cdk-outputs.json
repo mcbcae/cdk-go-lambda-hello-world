@@ -1,6 +1,0 @@
-{
-  "MyStack": {
-    "ApiGatewayEndpoint5AA8EC3A": "https://g1p6pku8je.execute-api.us-east-1.amazonaws.com/prod/",
-    "ApiEndpoint": "https://g1p6pku8je.execute-api.us-east-1.amazonaws.com/prod/"
-  }
-}

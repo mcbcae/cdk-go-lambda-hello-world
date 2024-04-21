@@ -35,8 +35,12 @@ jobs:
       run: |
         cd lambda
         rm -rf bootstrap function.zip
-        GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bootstrap main.go
+        go build -o bootstrap main.go
         zip function.zip bootstrap
+      env:
+        GOOS: linux
+        GOARCH: amd64
+        CGO_ENABLED: 0
 
     - name: CDK Diff
       run: |
@@ -68,8 +72,12 @@ jobs:
       run: |
         cd lambda
         rm -rf bootstrap function.zip
-        GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bootstrap main.go
+        go build -o bootstrap main.go
         zip function.zip bootstrap
+      env:
+        GOOS: linux
+        GOARCH: amd64
+        CGO_ENABLED: 0
 
     - name: CDK Deploy
       run: |
@@ -81,9 +89,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    - name: Test API Gateway Endpoint
+    - name: Hello World? Test
       run: |
         ENDPOINT=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
         curl -f $ENDPOINT
-
-  

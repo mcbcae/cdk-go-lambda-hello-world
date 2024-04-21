@@ -12,7 +12,7 @@ type Response events.APIGatewayProxyResponse
 func Handler(request events.APIGatewayProxyRequest) (Response, error) {
 	// Define the response message structure
 	message := map[string]string{
-		"message": "Hello World?",
+		"message": "Hello World!",
 	}
 
 	// Convert the message to JSON

@@ -3,3 +3,4 @@ cdk.out/
 .vscode/
 bootstrap
 function.zip
+cdk-outputs.json
