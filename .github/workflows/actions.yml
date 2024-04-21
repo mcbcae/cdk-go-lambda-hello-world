@@ -17,7 +17,7 @@ on:
 
 jobs:
   cdk-diff:
-    runs-on: ubuntu-latest
+    runs-on: amazonlinux-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
     - name: Checkout code
@@ -50,7 +50,7 @@ jobs:
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
   cdk-deploy:
-    runs-on: ubuntu-latest
+    runs-on: amazonlinux-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.operation == 'cdk_deploy'
     steps:
     - name: Checkout code
