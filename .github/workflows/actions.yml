@@ -15,7 +15,7 @@ on:
 
 jobs:
   cdk-diff:
-    runs-on: amazonl-latest
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
     - name: Checkout code
