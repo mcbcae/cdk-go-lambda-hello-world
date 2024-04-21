@@ -1,0 +1,7 @@
+node_modules/
+cdk.out/
+.vscode/
+go.mod
+go.sum
+bootstrap
+function.zip

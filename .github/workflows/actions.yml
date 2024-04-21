@@ -1,0 +1,41 @@
+name: CDK Operations
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Select Operation'
+        required: true
+        type: choice
+        options:
+          - CDK-Diff
+          - CDK-Deploy
+
+jobs:
+  cdk_diff:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.operation == 'cdk_diff' }}
+    steps:
+    - name: Setup Environment
+      uses: ./.github/actions/setup-environment
+
+    - name: CDK Diff
+      run: npx cdk diff
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  cdk_deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.operation == 'cdk_deploy' }}
+    steps:
+    - name: Setup Environment
+      uses: ./.github/actions/setup-environment
+
+    - name: CDK Deploy
+      run: npx cdk deploy --require-approval never
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
