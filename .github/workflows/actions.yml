@@ -52,7 +52,6 @@ jobs:
   cdk deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.operation == 'cdk_deploy'
-    if: ${{ github.event.inputs.operation == 'cdk_deploy' }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
