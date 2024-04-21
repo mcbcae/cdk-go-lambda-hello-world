@@ -37,11 +37,8 @@ jobs:
       run: |
         cd lambda
         rm -rf bootstrap function.zip
-        go build -o bootstrap main.go
+        GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
         zip function.zip bootstrap
-      env:
-        GOOS: linux
-        GOARCH: amd64 
 
     - name: CDK Diff
       run: |
@@ -73,11 +70,8 @@ jobs:
       run: |
         cd lambda
         rm -rf bootstrap function.zip
-        go build -o bootstrap main.go
+        GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
         zip function.zip bootstrap
-      env:
-        GOOS: linux
-        GOARCH: amd64
 
     - name: CDK Deploy
       run: |
@@ -94,3 +88,4 @@ jobs:
         ENDPOINT=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
         curl $ENDPOINT
 
+  
