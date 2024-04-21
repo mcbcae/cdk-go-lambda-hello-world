@@ -25,8 +25,8 @@ jobs:
       with:
         node-version: 20
 
-    - name: Install AWS CDK
-      run: npm install -g aws-cdk aws-cdk-lib
+    # - name: Install AWS CDK
+    #   run: npm install -g aws-cdk aws-cdk-lib
 
     - name: Set up Go for CDK Deploy
       uses: actions/setup-go@v5
@@ -42,6 +42,8 @@ jobs:
 
     - name: CDK Diff
       run: |
+        pwd
+        ls -la
         npm install -g aws-cdk aws-cdk-lib
         npx cdk diff
       env:
@@ -61,8 +63,8 @@ jobs:
       with:
         node-version: 20
 
-    - name: Install AWS CDK
-      run: npm install -g aws-cdk aws-cdk-lib
+    # - name: Install AWS CDK
+    #   run: npm install -g aws-cdk aws-cdk-lib
 
     - name: Set up Go for CDK Deploy
       uses: actions/setup-go@v5
