@@ -84,19 +84,13 @@ jobs:
         npm install aws-cdk aws-cdk-lib ts-node
         npx cdk deploy --require-approval never --outputs-file cdk-outputs.json
         cat cdk-outputs.json
-        ENDPOINT=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
-        curl $ENDPOINT
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    # - name: Test API Gateway Endpoint
-    #   run: |
-    #     endpoint=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
-    #     echo "API Gateway endpoint: $endpoint"
-    #     echo "::set-output name=api_gateway_endpoint::$endpoint"
-    #     endpoint="${{ steps.api_gateway.outputs.api_gateway_endpoint }}"
-    #     response=$(curl -s $endpoint)
-    #     echo "Response from API Gateway:"
-    #     echo "$response"
+    - name: Test API Gateway Endpoint
+      run: |
+        ENDPOINT=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
+        curl $ENDPOINT
+
