@@ -44,7 +44,7 @@ jobs:
       run: |
         pwd
         ls -la
-        npm install -g aws-cdk aws-cdk-lib
+        npm install aws-cdk aws-cdk-lib ts-node
         npx cdk diff
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -85,7 +85,7 @@ jobs:
 
     - name: CDK Deploy
       run: |
-        npm install -g aws-cdk aws-cdk-lib
+        npm install aws-cdk aws-cdk-lib ts-node
         npx cdk deploy --require-approval never
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
