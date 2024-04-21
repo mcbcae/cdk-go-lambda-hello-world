@@ -87,7 +87,25 @@ jobs:
       run: |
         npm install aws-cdk aws-cdk-lib ts-node
         npx cdk deploy --require-approval never
+        echo "Deploying CDK stack..."
+        output=$(npx cdk deploy --require-approval never --outputs-file cdk-outputs.json)
+        echo "$output"
+        echo "CDK stack deployed."
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    - name: Read API Gateway Endpoint from CDK Output
+      id: api_gateway
+      run: |
+        endpoint=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
+        echo "API Gateway endpoint: $endpoint"
+        echo "::set-output name=api_gateway_endpoint::$endpoint"
+
+    - name: Test API Gateway Endpoint
+      run: |
+        endpoint="${{ steps.api_gateway.outputs.api_gateway_endpoint }}"
+        response=$(curl -s $endpoint)
+        echo "Response from API Gateway:"
+        echo "$response"
