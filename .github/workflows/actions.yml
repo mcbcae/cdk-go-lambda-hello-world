@@ -1,9 +1,11 @@
-name: CDK Operations
+name: App Deployment
 
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**' # Ignore all paths for push, will be overridden by job-specific filter
   workflow_dispatch:
     inputs:
       operation:
@@ -14,26 +16,24 @@ on:
           - cdk_deploy
 
 jobs:
-  cdk_diff:
+  cdk diff:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js for CDK Diff
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 20
 
-    # - name: Install AWS CDK
-    #   run: npm install -g aws-cdk aws-cdk-lib
-
-    - name: Set up Go for CDK Deploy
+    - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: '1.22.2'
 
-    - name: Build Go binary and zip
+    - name: Build Go
       run: |
         cd lambda
         rm -rf bootstrap function.zip
@@ -42,8 +42,6 @@ jobs:
 
     - name: CDK Diff
       run: |
-        pwd
-        ls -la
         npm install aws-cdk aws-cdk-lib ts-node
         npx cdk diff
       env:
@@ -51,32 +49,25 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
-  cdk_deploy:
+  cdk deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.operation == 'cdk_deploy'
     if: ${{ github.event.inputs.operation == 'cdk_deploy' }}
     steps:
-    - name: Checkout code for CDK Deploy
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js for CDK Diff
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 20
 
-    # - name: Install AWS CDK
-    #   run: npm install -g aws-cdk aws-cdk-lib
-
-    - name: Set up Go for CDK Deploy
+    - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: '1.22.2'
 
-    - name: Set up Go for CDK Deploy
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.22.2'
-
-    - name: Build Go binary and zip
+    - name: Build Go
       run: |
         cd lambda
         rm -rf bootstrap function.zip
@@ -96,15 +87,11 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
 
-    - name: Read API Gateway Endpoint from CDK Output
-      id: api_gateway
+    - name: Test API Gateway Endpoint
       run: |
         endpoint=$(jq -r '.["MyStack"].ApiEndpoint' cdk-outputs.json)
         echo "API Gateway endpoint: $endpoint"
         echo "::set-output name=api_gateway_endpoint::$endpoint"
-
-    - name: Test API Gateway Endpoint
-      run: |
         endpoint="${{ steps.api_gateway.outputs.api_gateway_endpoint }}"
         response=$(curl -s $endpoint)
         echo "Response from API Gateway:"
