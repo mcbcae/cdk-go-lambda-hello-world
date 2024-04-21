@@ -41,7 +41,9 @@ jobs:
         zip function.zip bootstrap
 
     - name: CDK Diff
-      run: npx cdk diff
+      run: |
+        npm install -g aws-cdk aws-cdk-lib
+        npx cdk diff
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -80,7 +82,9 @@ jobs:
         zip function.zip bootstrap
 
     - name: CDK Deploy
-      run: npx cdk deploy --require-approval never
+      run: |
+        npm install -g aws-cdk aws-cdk-lib
+        npx cdk deploy --require-approval never
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
