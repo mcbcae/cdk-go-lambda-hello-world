@@ -1,0 +1,87 @@
+name: CDK Operations
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'Select Operation'
+        required: true
+        type: choice
+        options:
+          - cdk_deploy
+
+jobs:
+  cdk_diff:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js for CDK Diff
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk aws-cdk-lib
+
+    - name: Set up Go for CDK Deploy
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.2'
+
+    - name: Build Go binary and zip
+      run: |
+        cd lambda
+        rm -rf bootstrap function.zip
+        GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
+        zip function.zip bootstrap
+
+    - name: CDK Diff
+      run: npx cdk diff
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+
+  cdk_deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.operation == 'cdk_deploy' }}
+    steps:
+    - name: Checkout code for CDK Deploy
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js for CDK Diff
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk aws-cdk-lib
+
+    - name: Set up Go for CDK Deploy
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.2'
+
+    - name: Set up Go for CDK Deploy
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.2'
+
+    - name: Build Go binary and zip
+      run: |
+        cd lambda
+        rm -rf bootstrap function.zip
+        GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
+        zip function.zip bootstrap
+
+    - name: CDK Deploy
+      run: npx cdk deploy --require-approval never
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
