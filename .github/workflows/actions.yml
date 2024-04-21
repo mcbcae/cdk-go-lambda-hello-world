@@ -1,6 +1,9 @@
 name: CDK Operations
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       operation:
@@ -8,13 +11,12 @@ on:
         required: true
         type: choice
         options:
-          - CDK-Diff
-          - CDK-Deploy
+          - cdk_deploy
 
 jobs:
   cdk_diff:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.operation == 'cdk_diff' }}
+    if: github.ref == 'refs/heads/main'
     steps:
     - name: Setup Environment
       uses: ./.github/actions/setup-environment
@@ -29,6 +31,7 @@ jobs:
   cdk_deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.operation == 'cdk_deploy' }}
+    needs: cdk_diff
     steps:
     - name: Setup Environment
       uses: ./.github/actions/setup-environment
